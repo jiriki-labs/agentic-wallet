@@ -1,0 +1,31 @@
+# Grocery402 (npm workspaces). Dependencies and build artifacts — do not commit.
+# Untrack if needed: git rm -r --cached apps/grocery/node_modules
+
+# Dependencies (hoisted and per-package)
+node_modules/
+**/node_modules/
+
+# NestJS API
+api/dist/
+
+# Next.js web
+web/.next/
+web/out/
+
+# Tests / coverage
+coverage/
+.nyc_output/
+
+# Logs and local env (never commit secrets)
+*.log
+.env
+.env.*
+!.env.example
+
+# Tooling caches
+.eslintcache
+.turbo
+
+# OS
+.DS_Store
+Thumbs.db

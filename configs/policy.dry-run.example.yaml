@@ -1,0 +1,16 @@
+# Example policy for local demos: no chain spend; audit still records attempts.
+allowedTokens:
+  - USDC
+
+allowedChains:
+  - base-sepolia
+  - base
+
+allowedMerchants:
+  - localhost:4402
+  - grocery-demo.local
+
+maxAmountPerRequest: "15.00"
+dailyLimit: "50.00"
+requireApprovalAbove: "20.00"
+mode: "dry-run"

@@ -1,0 +1,15 @@
+The Jiriki authors wrote this software.
+
+THE BEERWARE LICENSE (Revision 42):
+
+As long as you retain this notice you can do whatever you want with this
+stuff. If we meet some day, and you think this stuff is worth it, you can
+buy the authors a beer in return.
+
+Copyright (c) 2026 The Jiriki Labs
+
+---
+
+Third-party libraries (Go modules, npm packages, and so on) remain under
+their own licenses. This notice applies to the original work in this
+repository unless a file or directory states otherwise.
