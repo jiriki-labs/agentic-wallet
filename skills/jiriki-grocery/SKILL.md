@@ -1,8 +1,13 @@
+---
+name: jiriki-grocery
+description: Order food ingredients via Jiriki wallet
+---
+
 # Grocery402 — Order ingredients via Jiriki
 
 ## Purpose
 
-When the user mentions food, a dish, being hungry, or grocery intent (including Polish phrases like *„zjadłbym carbonarę”*), this skill should:
+When the user mentions food, a dish, being hungry, or grocery intent (including Polish phrases like _„zjadłbym carbonarę”_), this skill should:
 
 1. Fetch a recipe from the **Grocery402** HTTP API (Nest.js in `apps/grocery`, default `http://localhost:4402`).
 2. Show ingredients and the **total USDC** price.
@@ -26,7 +31,7 @@ Present ingredients and **totalUsdc** clearly.
 
 ## Step 2 — Confirm
 
-Ask explicitly, e.g. *“Ingredients for carbonara (2 servings) are 8.50 USDC. Place the order?”*
+Ask explicitly, e.g. _“Ingredients for carbonara (2 servings) are 8.50 USDC. Place the order?”_
 
 ## Step 3 — Obtain exact `paymentRequirements`
 
@@ -64,22 +69,22 @@ curl -sS --unix-socket "${JIRIKI_HOME:-$HOME/.config/jiriki}/jiriki.sock" \
 
 ```json
 {
-  "url": "http://localhost:4402/orders",
-  "method": "POST",
-  "body": { "dish": "carbonara", "servings": 2 },
-  "merchant": "localhost:4402",
-  "amount": "8.50",
-  "token": "USDC",
-  "chain": "base-sepolia",
-  "reason": "ingredients for carbonara",
-  "paymentRequirements": { }
+	"url": "http://localhost:4402/orders",
+	"method": "POST",
+	"body": { "dish": "carbonara", "servings": 2 },
+	"merchant": "localhost:4402",
+	"amount": "8.50",
+	"token": "USDC",
+	"chain": "base-sepolia",
+	"reason": "ingredients for carbonara",
+	"paymentRequirements": {}
 }
 ```
 
 ## Step 5 — Interpret daemon response
 
-- **`status` = `paid`** — *“Ordered. Tx: [txHash]. Delivery ETA ~2h (demo).”*
-- **`status` = `pending`** (policy confirm mode) — *“Awaiting approval. Run: `jiriki approve <approvalId>`”*
+- **`status` = `paid`** — _“Ordered. Tx: [txHash]. Delivery ETA ~2h (demo).”_
+- **`status` = `pending`** (policy confirm mode) — _“Awaiting approval. Run: `jiriki approve <approvalId>`”_
 - **`status` = `rejected`** — explain **`error`**
 - **`status` = `dry-run`** — policy `dry-run`: no chain settlement; tx hash is synthetic.
 
