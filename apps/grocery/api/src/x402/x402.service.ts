@@ -9,6 +9,7 @@ import {
 	type PaymentPayload,
 	type PaymentRequirements as CorePaymentRequirements,
 } from '@x402/core/types';
+import { decimalUsdcToAtomic } from './amount';
 
 /** USDC on Base Sepolia (policy / daemon examples). */
 export const BASE_SEPOLIA_USDC = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
@@ -60,7 +61,7 @@ export class X402Service {
 			payTo: params.merchantPayTo,
 			maxTimeoutSeconds: 600,
 			asset: BASE_SEPOLIA_USDC,
-			extra: {},
+			extra: { name: 'USDC', version: '2' },
 		};
 	}
 
@@ -87,8 +88,17 @@ export class X402Service {
 			return { ok: false, reason: 'invalid_x_payment_encoding' };
 		}
 		const client = this.facilitatorClient();
+		let maxAmountAtomic: string;
+		try {
+			maxAmountAtomic = decimalUsdcToAtomic(requirements.maxAmountRequired);
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : String(e);
+			this.log.warn(`invalid maxAmountRequired: ${msg}`);
+			return { ok: false, reason: 'invalid_amount' };
+		}
 		const coreRequirements = {
 			...requirements,
+			maxAmountRequired: maxAmountAtomic,
 			outputSchema: requirements.outputSchema ?? {},
 			extra: requirements.extra ?? {},
 			network: requirements.network as Network,

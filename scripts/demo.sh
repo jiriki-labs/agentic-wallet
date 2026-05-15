@@ -2,7 +2,7 @@
 # Grocery402 demo: recipe fetch + optional pay-x402 via Jiriki (Unix socket).
 # Prerequisites:
 #   - Grocery API on http://localhost:4402 (e.g. `make grocery-dev` from another terminal)
-#   - `jiriki up` with policy allowing merchant localhost:4402 (see configs/policy.example.yaml)
+#   - `jiriki up` with configs/policy.demo.yaml (auto-pay up to 20 USDC; see skill jiriki-grocery)
 # Environment:
 #   MERCHANT_ADDR — must match paymentRequirements.payTo (default: Anvil-style test address)
 set -euo pipefail
@@ -78,13 +78,28 @@ rm -f "$PR_FILE"
 IDEM="$(python3 -c 'import uuid; print(uuid.uuid4())')"
 echo ""
 echo "Agent: pay-x402 via Jiriki (Idempotency-Key=${IDEM})..."
-curl -sS --unix-socket "$SOCK" \
+PAY_RESP="$(curl -sS --unix-socket "$SOCK" \
   -X POST http://localhost/pay-x402 \
   -H 'Content-Type: application/json' \
   -H "Idempotency-Key: ${IDEM}" \
-  -d "$PAY_JSON" | {
-  command -v jq >/dev/null && jq . || cat
-}
+  -d "$PAY_JSON")"
+echo "$PAY_RESP" | { command -v jq >/dev/null && jq . || cat; }
+
+if command -v jq >/dev/null; then
+  ORDER_ID="$(echo "$PAY_RESP" | jq -r '.orderId // empty')"
+  TX_HASH="$(echo "$PAY_RESP" | jq -r '.txHash // empty')"
+  CHAIN="$(echo "$PAY_RESP" | jq -r '.chain // "base-sepolia"')"
+  WEB_URL="${GROCERY_WEB_URL:-http://127.0.0.1:3020}"
+  if [[ -n "$ORDER_ID" && -n "$TX_HASH" ]]; then
+    echo ""
+    echo "Order confirmation: ${WEB_URL}/orders/${ORDER_ID}?tx=${TX_HASH}&chain=${CHAIN}"
+    if [[ "$CHAIN" == "base" ]]; then
+      echo "Transaction: https://basescan.org/tx/${TX_HASH}"
+    else
+      echo "Transaction: https://sepolia.basescan.org/tx/${TX_HASH}"
+    fi
+  fi
+fi
 
 echo ""
 echo "Done."

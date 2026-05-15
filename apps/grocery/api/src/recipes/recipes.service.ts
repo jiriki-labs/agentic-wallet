@@ -25,22 +25,22 @@ const CATALOG: Record<string, Recipe> = {
 		dish: 'carbonara',
 		baseServings: 2,
 		ingredients: [
-			{ name: 'pancetta', amount: '150g', priceUsdc: '2.50' },
-			{ name: 'eggs', amount: '4', priceUsdc: '1.20' },
-			{ name: 'pecorino', amount: '50g', priceUsdc: '3.00' },
-			{ name: 'spaghetti', amount: '200g', priceUsdc: '1.50' },
-			{ name: 'black pepper', amount: '5g', priceUsdc: '0.30' },
+			{ name: 'pancetta', amount: '150g', priceUsdc: '0.10' },
+			{ name: 'eggs', amount: '4', priceUsdc: '0.20' },
+			{ name: 'pecorino', amount: '50g', priceUsdc: '0.30' },
+			{ name: 'spaghetti', amount: '200g', priceUsdc: '0.50' },
+			{ name: 'black pepper', amount: '5g', priceUsdc: '0.03' },
 		],
 	},
 	bolognese: {
 		dish: 'bolognese',
 		baseServings: 2,
 		ingredients: [
-			{ name: 'ground beef', amount: '300g', priceUsdc: '4.20' },
-			{ name: 'tomatoes', amount: '400g', priceUsdc: '1.80' },
+			{ name: 'ground beef', amount: '300g', priceUsdc: '0.42' },
+			{ name: 'tomatoes', amount: '400g', priceUsdc: '0.18' },
 			{ name: 'onion', amount: '1', priceUsdc: '0.40' },
 			{ name: 'carrot', amount: '1', priceUsdc: '0.35' },
-			{ name: 'pasta', amount: '250g', priceUsdc: '1.60' },
+			{ name: 'pasta', amount: '250g', priceUsdc: '0.16' },
 		],
 	},
 	'aglio e olio': {
@@ -48,9 +48,9 @@ const CATALOG: Record<string, Recipe> = {
 		baseServings: 2,
 		ingredients: [
 			{ name: 'spaghetti', amount: '200g', priceUsdc: '1.50' },
-			{ name: 'garlic', amount: '4 cloves', priceUsdc: '0.25' },
-			{ name: 'olive oil', amount: '60ml', priceUsdc: '1.10' },
-			{ name: 'chili flakes', amount: '5g', priceUsdc: '0.20' },
+			{ name: 'garlic', amount: '4 cloves', priceUsdc: '0.025' },
+			{ name: 'olive oil', amount: '60ml', priceUsdc: '0.11' },
+			{ name: 'chili flakes', amount: '5g', priceUsdc: '0.02' },
 		],
 	},
 };

@@ -1,7 +1,9 @@
 import {
 	Body,
 	Controller,
+	Get,
 	Headers,
+	Param,
 	Post,
 	Req,
 	Res,
@@ -20,6 +22,11 @@ export class OrdersController {
 		private readonly recipes: RecipesService,
 		private readonly x402: X402Service,
 	) {}
+
+	@Get('orders/:orderId')
+	getOrder(@Param('orderId') orderId: string) {
+		return this.orders.getOrder(orderId);
+	}
 
 	@Post('orders')
 	async createOrder(

@@ -1,0 +1,17 @@
+# Grocery402 demo policy: payments at or below requireApprovalAbove settle automatically;
+# amounts above that threshold require `jiriki approve`. Use with a funded test wallet on base-sepolia.
+allowedTokens:
+  - USDC
+
+allowedChains:
+  - base-sepolia
+  - base
+
+allowedMerchants:
+  - localhost:4402
+  - grocery-demo.local
+
+maxAmountPerRequest: "20.00"
+dailyLimit: "50.00"
+requireApprovalAbove: "20.00"
+mode: "auto"

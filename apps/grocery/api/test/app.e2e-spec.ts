@@ -53,15 +53,21 @@ describe('Grocery402 API (e2e)', () => {
 			});
 	});
 
-	it('POST /orders with X-Payment confirms when verify skipped', () => {
-		return request(app.getHttpServer())
+	it('POST /orders with X-Payment confirms when verify skipped', async () => {
+		const res = await request(app.getHttpServer())
 			.post('/orders')
 			.set('X-Payment', Buffer.from('{}').toString('base64'))
 			.send({ dish: 'carbonara', servings: 2 })
-			.expect(201)
-			.expect((res) => {
-				expect(res.body.status).toBe('confirmed');
-				expect(res.body.orderId).toMatch(/^GRC-/);
+			.expect(201);
+		expect(res.body.status).toBe('confirmed');
+		expect(res.body.orderId).toMatch(/^GRC-/);
+
+		await request(app.getHttpServer())
+			.get(`/orders/${res.body.orderId}`)
+			.expect(200)
+			.expect((getRes) => {
+				expect(getRes.body.orderId).toBe(res.body.orderId);
+				expect(getRes.body.dish).toBe('carbonara');
 			});
 	});
 });

@@ -34,6 +34,7 @@ type payX402Response struct {
 	Token          string `json:"token,omitempty"`
 	Chain          string `json:"chain,omitempty"`
 	TxHash         string `json:"txHash,omitempty"`
+	OrderID        string `json:"orderId,omitempty"`
 	ApprovalID     string `json:"approvalId,omitempty"`
 	ExpiresAt      string `json:"expiresAt,omitempty"`
 	Error          string `json:"error,omitempty"`
@@ -128,7 +129,8 @@ func (s *Server) processPayX402(ctx context.Context, req payX402Request) (int, [
 			body, _ := json.Marshal(payX402Response{Status: "error", Error: err.Error()})
 			return http.StatusInternalServerError, body
 		}
-		_ = s.auditStore.UpdateTxHash(result.RecordID, receipt.TxHash, "dry-run", "")
+		orderID := parseMerchantOrderID(receipt.MerchantResponse)
+		_ = s.auditStore.UpdateTxHash(result.RecordID, receipt.TxHash, "dry-run", orderID)
 		body, _ := json.Marshal(payX402Response{
 			Status:         "dry-run",
 			PolicyDecision: "dry-run",
@@ -136,6 +138,7 @@ func (s *Server) processPayX402(ctx context.Context, req payX402Request) (int, [
 			Token:          req.Token,
 			Chain:          req.Chain,
 			TxHash:         receipt.TxHash,
+			OrderID:        orderID,
 		})
 		return http.StatusOK, body
 
@@ -182,7 +185,8 @@ func (s *Server) processPayX402(ctx context.Context, req payX402Request) (int, [
 			body, _ := json.Marshal(payX402Response{Status: "error", Error: fmt.Sprintf("payment failed: %v", err)})
 			return http.StatusBadGateway, body
 		}
-		_ = s.auditStore.UpdateTxHash(result.RecordID, receipt.TxHash, "paid", "")
+		orderID := parseMerchantOrderID(receipt.MerchantResponse)
+		_ = s.auditStore.UpdateTxHash(result.RecordID, receipt.TxHash, "paid", orderID)
 		body, _ := json.Marshal(payX402Response{
 			Status:         "paid",
 			PolicyDecision: "approve",
@@ -190,6 +194,7 @@ func (s *Server) processPayX402(ctx context.Context, req payX402Request) (int, [
 			Token:          req.Token,
 			Chain:          req.Chain,
 			TxHash:         receipt.TxHash,
+			OrderID:        orderID,
 		})
 		return http.StatusOK, body
 	}
@@ -227,10 +232,12 @@ func (s *Server) handleApprove(w http.ResponseWriter, r *http.Request) {
 	}
 
 	s.confirmQ.remove(req.ApprovalID)
-	_ = s.auditStore.UpdateTxHash(pending.auditID, receipt.TxHash, "paid", "")
+	orderID := parseMerchantOrderID(receipt.MerchantResponse)
+	_ = s.auditStore.UpdateTxHash(pending.auditID, receipt.TxHash, "paid", orderID)
 	writeJSON(w, http.StatusOK, payX402Response{
 		Status:         "paid",
 		PolicyDecision: "approve",
 		TxHash:         receipt.TxHash,
+		OrderID:        orderID,
 	})
 }

@@ -104,7 +104,7 @@ func (c *NativeClient) Pay(ctx context.Context, input PayInput) (Receipt, error)
 		return Receipt{}, fmt.Errorf("facilitator settle: %w", err)
 	}
 	if !settleResp.Success {
-		return Receipt{}, fmt.Errorf("facilitator rejected payment: %s", settleResp.ErrorMessage)
+		return Receipt{}, fmt.Errorf("facilitator rejected payment: reason=%s message=%s", settleResp.ErrorReason, settleResp.ErrorMessage)
 	}
 
 	proofEncoded := base64.StdEncoding.EncodeToString(payloadBytes)

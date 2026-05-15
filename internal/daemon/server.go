@@ -10,7 +10,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/jiriki-labs/agentic-wallet/internal/audit"
+	"github.com/jiriki-labs/agentic-wallet/internal/chain"
 	"github.com/jiriki-labs/agentic-wallet/internal/config"
 	"github.com/jiriki-labs/agentic-wallet/internal/keystore"
 	"github.com/jiriki-labs/agentic-wallet/internal/policy"
@@ -153,9 +155,28 @@ func (s *Server) handleBalance(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	writeJSON(w, http.StatusOK, map[string]interface{}{
+	ctx, cancel := context.WithTimeout(r.Context(), 20*time.Second)
+	defer cancel()
+
+	client, err := chain.New(chain.BaseSepoliaRPC)
+	if err != nil {
+		writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
+		return
+	}
+	defer client.Close()
+
+	usdc := common.HexToAddress(x402.DefaultUSDCAddress)
+	bal, err := client.WalletBalances(ctx, usdc, s.signer.Address())
+	if err != nil {
+		writeJSON(w, http.StatusBadGateway, map[string]string{"error": err.Error()})
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]string{
 		"address": s.signer.Address().Hex(),
-		"note":    "use jiriki balance for live on-chain balance",
+		"chain":   "base-sepolia",
+		"eth":     chain.FormatETH(bal.ETH),
+		"usdc":    chain.FormatUSDC(bal.USDC),
 	})
 }
 

@@ -125,7 +125,7 @@ func runTUI() error {
 		{"Start daemon", "Unlock, load policy, listen for API", []string{"up"}},
 		{"Audit", "Payment history (stub)", []string{"audit"}},
 		{"Policy", "Active policy (stub)", []string{"policy"}},
-		{"Balance", "Wallet balance via daemon (stub)", []string{"balance"}},
+		{"Balance", "On-chain ETH and USDC (Base Sepolia)", []string{"balance"}},
 		{"Approve", "Approve pending payment (stub)", []string{"approve"}},
 		{"Version", "Print CLI version", []string{"version"}},
 		{"Quit", "Close this menu", nil},

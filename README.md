@@ -134,6 +134,14 @@ The Go binary `bin/grocery-demo` only prints these instructions; it does not sta
 
 Ensure hosts in your policy (`allowedMerchants`) match how you call the API (e.g. `localhost:4402`).
 
+For the agent grocery demo (auto-settle up to **20 USDC**, manual approve above), copy the demo policy instead of the conservative example:
+
+```bash
+cp configs/policy.demo.yaml ~/.config/jiriki/policy.yaml
+```
+
+Then restart `jiriki up` if the daemon is already running.
+
 ## Makefile targets
 
 | Target | Description |

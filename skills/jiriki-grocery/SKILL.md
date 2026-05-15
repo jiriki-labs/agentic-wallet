@@ -83,10 +83,28 @@ curl -sS --unix-socket "${JIRIKI_HOME:-$HOME/.config/jiriki}/jiriki.sock" \
 
 ## Step 5 — Interpret daemon response
 
-- **`status` = `paid`** — _“Ordered. Tx: [txHash]. Delivery ETA ~2h (demo).”_
+Base URLs (override via env when needed):
+
+- **Web shop:** `GROCERY_WEB_URL` — default `http://127.0.0.1:3020`
+- **Block explorer (Base Sepolia):** `https://sepolia.basescan.org/tx/{txHash}` (`base` mainnet → `https://basescan.org/tx/{txHash}`)
+
+After **`status` = `paid`** or **`dry-run`** (when a tx hash is present), the agent **must** reply with **clickable markdown links** (Polish or English is fine):
+
+1. **Order confirmation (shop):** `{GROCERY_WEB_URL}/orders/{orderId}?tx={txHash}&chain={chain}`  
+   Use **`orderId`** and **`txHash`** from the daemon JSON (`orderId` may be empty if the merchant body could not be parsed — then omit the shop link and say the order id is unknown).
+2. **Transaction on BaseScan:** explorer URL for **`txHash`** on the payment **`chain`**.
+
+Example (Polish):
+
+> Zamówienie potwierdzone.  
+> **Sklep:** [potwierdzenie zamówienia](http://127.0.0.1:3020/orders/GRC-001?tx=0x…&chain=base-sepolia)  
+> **Transakcja:** [BaseScan](https://sepolia.basescan.org/tx/0x…)
+
+Other statuses:
+
 - **`status` = `pending`** (policy confirm mode) — _“Awaiting approval. Run: `jiriki approve <approvalId>`”_
 - **`status` = `rejected`** — explain **`error`**
-- **`status` = `dry-run`** — policy `dry-run`: no chain settlement; tx hash is synthetic.
+- **`status` = `dry-run`** — policy `dry-run`: no chain settlement; tx hash is synthetic; still include explorer link if `txHash` is set.
 
 ## Step 6 — Optional audit
 
@@ -99,4 +117,10 @@ Or: `jiriki audit --since=1h` when implemented.
 ## Local stack
 
 - API: `make grocery-dev` (from repo root) or `cd apps/grocery && npm install && npm run dev`
-- Daemon: `jiriki up` with policy allowing merchant **`localhost:4402`** (see `configs/policy.example.yaml`).
+- Daemon: `jiriki up` with policy allowing merchant **`localhost:4402`**. For the live demo (auto-pay up to **20 USDC**, confirm above), install:
+
+  ```bash
+  cp configs/policy.demo.yaml "${JIRIKI_HOME:-$HOME/.config/jiriki}/policy.yaml"
+  ```
+
+  (`configs/policy.example.yaml` uses `mode: confirm` and requires approval for every payment.)

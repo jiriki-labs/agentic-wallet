@@ -27,5 +27,13 @@ func (a *evmSignerAdapter) SignTypedData(
 	if err != nil {
 		return nil, err
 	}
-	return a.s.SignHash(digest)
+	sig, err := a.s.SignHash(digest)
+	if err != nil {
+		return nil, err
+	}
+	// crypto.Sign returns v as 0 or 1; EIP-3009 / ecrecover convention requires 27 or 28.
+	if len(sig) == 65 && sig[64] < 27 {
+		sig[64] += 27
+	}
+	return sig, nil
 }
