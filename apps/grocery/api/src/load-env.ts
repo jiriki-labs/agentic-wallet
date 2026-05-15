@@ -10,10 +10,7 @@ export function loadGroceryEnv(): void {
 	const apiRoot = resolve(__dirname, '..');
 	const groceryRoot = resolve(apiRoot, '..');
 
-	const paths = [
-		resolve(groceryRoot, '.env'),
-		resolve(apiRoot, '.env'),
-	];
+	const paths = [resolve(groceryRoot, '.env'), resolve(apiRoot, '.env')];
 	for (const path of paths) {
 		if (existsSync(path)) {
 			config({ path, override: true });

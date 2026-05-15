@@ -89,9 +89,7 @@ export class X402Service {
 		}
 		let paymentPayload: PaymentPayload;
 		try {
-			paymentPayload = decodePaymentSignatureHeader(
-				xPaymentB64.trim(),
-			) as PaymentPayload;
+			paymentPayload = decodePaymentSignatureHeader(xPaymentB64.trim());
 		} catch (e) {
 			this.log.warn(`invalid X-Payment base64/json: ${e}`);
 			return { ok: false, reason: 'invalid_x_payment_encoding' };
@@ -99,7 +97,9 @@ export class X402Service {
 		const client = this.facilitatorClient();
 		let maxAmountAtomic: string;
 		try {
-			maxAmountAtomic = decimalUsdcToAtomic(requirements.maxAmountRequired);
+			maxAmountAtomic = decimalUsdcToAtomic(
+				requirements.maxAmountRequired,
+			);
 		} catch (e) {
 			const msg = e instanceof Error ? e.message : String(e);
 			this.log.warn(`invalid maxAmountRequired: ${msg}`);

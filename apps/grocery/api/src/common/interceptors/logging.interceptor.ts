@@ -22,7 +22,10 @@ export class LoggingInterceptor implements NestInterceptor {
 
 	constructor(private readonly reflector: Reflector) {}
 
-	intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
+	intercept(
+		context: ExecutionContext,
+		next: CallHandler,
+	): Observable<unknown> {
 		const skipLogging = this.reflector.get<boolean>(
 			SKIP_LOGGING_KEY,
 			context.getHandler(),
