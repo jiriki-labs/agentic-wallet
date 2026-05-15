@@ -7,7 +7,7 @@ description: Order food ingredients via Jiriki wallet
 
 ## Purpose
 
-When the user mentions food, a dish, being hungry, or grocery intent (including Polish phrases like _„zjadłbym carbonarę”_), this skill should:
+When the user mentions food, a dish, being hungry, or grocery intent (including carbonara), this skill should:
 
 1. Fetch a recipe from the **Grocery402** HTTP API (Nest.js in `apps/grocery`, default `http://localhost:4402`).
 2. Show ingredients and the **total USDC** price.
@@ -90,15 +90,15 @@ Base URLs (override via env when needed):
 
 After **`status` = `paid`** or **`dry-run`** (when a tx hash is present), the agent **must** reply with **clickable markdown links** (Polish or English is fine):
 
-1. **Order confirmation (shop):** `{GROCERY_WEB_URL}/orders/{orderId}?tx={txHash}&chain={chain}`  
+1. **Order confirmation (shop):** `{GROCERY_WEB_URL}/orders/{orderId}?tx={txHash}&chain={chain}`
    Use **`orderId`** and **`txHash`** from the daemon JSON (`orderId` may be empty if the merchant body could not be parsed — then omit the shop link and say the order id is unknown).
 2. **Transaction on BaseScan:** explorer URL for **`txHash`** on the payment **`chain`**.
 
-Example (Polish):
+Example:
 
-> Zamówienie potwierdzone.  
-> **Sklep:** [potwierdzenie zamówienia](http://127.0.0.1:3020/orders/GRC-001?tx=0x…&chain=base-sepolia)  
-> **Transakcja:** [BaseScan](https://sepolia.basescan.org/tx/0x…)
+> Order confirmed.
+> **Shop:** [order confirmed](http://127.0.0.1:3020/orders/GRC-001?tx=0x…&chain=base-sepolia)
+> **Transaction:** [BaseScan](https://sepolia.basescan.org/tx/0x…)
 
 Other statuses:
 
@@ -119,8 +119,8 @@ Or: `jiriki audit --since=1h` when implemented.
 - API: `make grocery-dev` (from repo root) or `cd apps/grocery && npm install && npm run dev`
 - Daemon: `jiriki up` with policy allowing merchant **`localhost:4402`**. For the live demo (auto-pay up to **20 USDC**, confirm above), install:
 
-  ```bash
-  cp configs/policy.demo.yaml "${JIRIKI_HOME:-$HOME/.config/jiriki}/policy.yaml"
-  ```
+    ```bash
+    cp configs/policy.demo.yaml "${JIRIKI_HOME:-$HOME/.config/jiriki}/policy.yaml"
+    ```
 
-  (`configs/policy.example.yaml` uses `mode: confirm` and requires approval for every payment.)
+    (`configs/policy.example.yaml` uses `mode: confirm` and requires approval for every payment.)
