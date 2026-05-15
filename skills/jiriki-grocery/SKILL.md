@@ -88,7 +88,7 @@ Base URLs (override via env when needed):
 - **Web shop:** `GROCERY_WEB_URL` — default `http://127.0.0.1:3020`
 - **Block explorer (Base Sepolia):** `https://sepolia.basescan.org/tx/{txHash}` (`base` mainnet → `https://basescan.org/tx/{txHash}`)
 
-After **`status` = `paid`** or **`dry-run`** (when a tx hash is present), the agent **must** reply with **clickable markdown links** (Polish or English is fine):
+After **`status` = `paid`** or **`dry-run`** (when a tx hash is present), the agent **must** reply with **clickable markdown links**:
 
 1. **Order confirmation (shop):** `{GROCERY_WEB_URL}/orders/{orderId}?tx={txHash}&chain={chain}`
    Use **`orderId`** and **`txHash`** from the daemon JSON (`orderId` may be empty if the merchant body could not be parsed — then omit the shop link and say the order id is unknown).
