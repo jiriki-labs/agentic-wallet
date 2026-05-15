@@ -124,7 +124,7 @@ func runTUI() error {
 		{"Init wallet", "Create keystore and print address", []string{"init"}},
 		{"Start daemon", "Unlock, load policy, listen for API", []string{"up"}},
 		{"Audit", "Payment history (stub)", []string{"audit"}},
-		{"Policy", "Active policy (stub)", []string{"policy"}},
+		{"Edit policy", "Limits, allowlists, and mode", []string{"policy"}},
 		{"Balance", "On-chain ETH and USDC (Base Sepolia)", []string{"balance"}},
 		{"Approve", "Approve pending payment (stub)", []string{"approve"}},
 		{"Version", "Print CLI version", []string{"version"}},
