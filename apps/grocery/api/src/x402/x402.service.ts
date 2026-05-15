@@ -15,6 +15,15 @@ import { decimalUsdcToAtomic } from './amount';
 export const BASE_SEPOLIA_USDC = '0x036CbD53842c5426634e7929541eC2318f3dCF7e';
 
 /**
+ * Facilitator verify rejects EIP-3009 authorizations whose nonce is already
+ * consumed on-chain. Jiriki settles via the facilitator before replaying
+ * POST /orders with the same X-Payment payload, so verify fails here even
+ * though payment already succeeded.
+ */
+export const FACILITATOR_NONCE_ALREADY_USED =
+	'invalid_exact_evm_nonce_already_used';
+
+/**
  * 402 `accepts` row shape aligned with Jiriki Go `x402.PaymentRequirements` (v1 wire format).
  * Kept as a local interface so Nest `declaration` emit stays portable (no SDK path in `.d.ts`).
  */
@@ -112,6 +121,12 @@ export class X402Service {
 				data.invalidMessage ??
 				data.invalidReason ??
 				'facilitator_rejected';
+			if (reason === FACILITATOR_NONCE_ALREADY_USED) {
+				this.log.log(
+					'payment already settled on-chain (nonce used); accepting X-Payment',
+				);
+				return { ok: true };
+			}
 			this.log.warn(`facilitator verify failed: ${reason}`);
 			return { ok: false, reason };
 		} catch (e) {
@@ -120,6 +135,12 @@ export class X402Service {
 					e.invalidMessage ??
 					e.invalidReason ??
 					'facilitator_rejected';
+				if (reason === FACILITATOR_NONCE_ALREADY_USED) {
+					this.log.log(
+						'payment already settled on-chain (nonce used); accepting X-Payment',
+					);
+					return { ok: true };
+				}
 				this.log.warn(`facilitator verify failed: ${reason}`);
 				return { ok: false, reason };
 			}
